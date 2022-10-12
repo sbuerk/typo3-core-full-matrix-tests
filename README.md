@@ -1,0 +1,4 @@
+TYPO3 FullMatrix CI using GitHub Actions
+========================================
+
+[![typo3 main](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-main.yml/badge.svg)](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-main.yml)[![typo3 11.5](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-11.5.yml/badge.svg)](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-11.5.yml)[![typo3 10.4](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-10.4.yml/badge.svg)](https://github.com/sbuerk/typo3-core-full-matrix-tests/actions/workflows/core-10.4.yml)

@@ -1,0 +1,172 @@
+name: "TYPO3 11.5"
+
+on:
+  push:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  unit:
+    name: "unit"
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        coreBranch: [ '11.5' ]
+        phpVersion: [ '7.4', '8.0', '8.1' ]
+        composerInstallType: ['composerInstallMin', 'composerInstall', 'composerInstallMax']
+    steps:
+      - name: Checkout github.com/typo3/typo3 on ${{ matrix.coreBranch }}
+        uses: actions/checkout@v3
+        with:
+          repository: typo3/typo3
+          ref: ${{ matrix.coreBranch }}
+          token: ${{ secrets.GIT_CLONE_TOKEN }}
+          path: ./core
+
+      - name: Composer install
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s ${{ matrix.composerInstallType }}
+        working-directory: ./core
+
+      - name: Run tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s unit
+        working-directory: ./core
+
+  unitDeprecated:
+    name: "unitDeprecated"
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        coreBranch: [ '11.5' ]
+        phpVersion: [ '7.4', '8.0', '8.1' ]
+        composerInstallType: ['composerInstallMin', 'composerInstall', 'composerInstallMax']
+    steps:
+      - name: Checkout github.com/typo3/typo3 on ${{ matrix.coreBranch }}
+        uses: actions/checkout@v3
+        with:
+          repository: typo3/typo3
+          ref: ${{ matrix.coreBranch }}
+          token: ${{ secrets.GIT_CLONE_TOKEN }}
+          path: ./core
+
+      - name: Composer install
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s ${{ matrix.composerInstallType }}
+        working-directory: ./core
+
+      - name: Run tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s unitDeprecated
+        working-directory: ./core
+
+
+  functional:
+    name: "functional"
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        coreBranch: [ '11.5' ]
+        phpVersion: [ '7.4', '8.0', '8.1' ]
+        composerInstallType: ['composerInstallMin', 'composerInstall', 'composerInstallMax']
+        suiteOptions:
+          - '-d sqlite'
+          - '-d mysql -a mysqli -j 5.5'
+          - '-d mysql -a pdo_mysql -j 5.5'
+          - '-d mysql -a mysqli -j 5.6'
+          - '-d mysql -a pdo_mysql -j 5.6'
+          - '-d mysql -a mysqli -j 5.7'
+          - '-d mysql -a pdo_mysql -j 5.7'
+          - '-d mysql -a mysqli -j 8.0'
+          - '-d mysql -a pdo_mysql -j 8.0'
+          - '-d mariadb -a mysqli -i 10.3'
+          - '-d mariadb -a pdo_mysql -i 10.3'
+          - '-d mariadb -a mysqli -i 10.4'
+          - '-d mariadb -a pdo_mysql -i 10.4'
+          - '-d mariadb -a mysqli -i 10.5'
+          - '-d mariadb -a pdo_mysql -i 10.5'
+          - '-d mariadb -a mysqli -i 10.6'
+          - '-d mariadb -a pdo_mysql -i 10.6'
+          - '-d mariadb -a mysqli -i 10.7'
+          - '-d mariadb -a pdo_mysql -i 10.7'
+          - '-d postgres -k 10'
+          - '-d postgres -k 11'
+          - '-d postgres -k 12'
+          - '-d postgres -k 13'
+          - '-d postgres -k 14'
+    steps:
+      - name: Checkout github.com/typo3/typo3 on ${{ matrix.coreBranch }}
+        uses: actions/checkout@v3
+        with:
+          repository: typo3/typo3
+          ref: ${{ matrix.coreBranch }}
+          token: ${{ secrets.GIT_CLONE_TOKEN }}
+          path: ./core
+
+      - name: Composer install
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s ${{ matrix.composerInstallType }}
+        working-directory: ./core
+
+      - name: Run tests
+        run: Build/Scripts/runTests.sh -s functional -p ${{ matrix.phpVersion }} ${{ matrix.suiteOptions }}
+        working-directory: ./core
+
+  functionalDeprecated:
+    name: "functionalDeprecated"
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        coreBranch: [ '11.5' ]
+        phpVersion: [ '7.4', '8.0', '8.1' ]
+        composerInstallType: ['composerInstallMin', 'composerInstall', 'composerInstallMax']
+        suiteOptions:
+          - '-d sqlite'
+          - '-d mysql -a mysqli -j 5.5'
+          - '-d mysql -a pdo_mysql -j 5.5'
+          - '-d mysql -a mysqli -j 5.6'
+          - '-d mysql -a pdo_mysql -j 5.6'
+          - '-d mysql -a mysqli -j 5.7'
+          - '-d mysql -a pdo_mysql -j 5.7'
+          - '-d mysql -a mysqli -j 8.0'
+          - '-d mysql -a pdo_mysql -j 8.0'
+          - '-d mariadb -a mysqli -i 10.3'
+          - '-d mariadb -a pdo_mysql -i 10.3'
+          - '-d mariadb -a mysqli -i 10.4'
+          - '-d mariadb -a pdo_mysql -i 10.4'
+          - '-d mariadb -a mysqli -i 10.5'
+          - '-d mariadb -a pdo_mysql -i 10.5'
+          - '-d mariadb -a mysqli -i 10.6'
+          - '-d mariadb -a pdo_mysql -i 10.6'
+          - '-d mariadb -a mysqli -i 10.7'
+          - '-d mariadb -a pdo_mysql -i 10.7'
+          - '-d postgres -k 10'
+          - '-d postgres -k 11'
+          - '-d postgres -k 12'
+          - '-d postgres -k 13'
+          - '-d postgres -k 14'
+    steps:
+      - name: Checkout github.com/typo3/typo3 on ${{ matrix.coreBranch }}
+        uses: actions/checkout@v3
+        with:
+          repository: typo3/typo3
+          ref: ${{ matrix.coreBranch }}
+          token: ${{ secrets.GIT_CLONE_TOKEN }}
+          path: ./core
+
+      - name: Composer install
+        run: Build/Scripts/runTests.sh -p ${{ matrix.phpVersion }} -s ${{ matrix.composerInstallType }}
+        working-directory: ./core
+
+      - name: Run tests
+        run: Build/Scripts/runTests.sh -s functionalDeprecated -p ${{ matrix.phpVersion }} ${{ matrix.suiteOptions }}
+        working-directory: ./core
